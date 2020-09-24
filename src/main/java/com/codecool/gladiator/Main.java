@@ -4,6 +4,8 @@ import com.codecool.gladiator.controller.Colosseum;
 import com.codecool.gladiator.model.gladiators.GladiatorFactory;
 import com.codecool.gladiator.view.ConsoleView;
 
+import java.io.File;
+
 public class Main {
 
     public static void main(String[] args) {

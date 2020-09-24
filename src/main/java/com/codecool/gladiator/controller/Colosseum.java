@@ -5,10 +5,9 @@ import com.codecool.gladiator.model.Contestants;
 import com.codecool.gladiator.model.gladiators.*;
 import com.codecool.gladiator.util.Tournament;
 import com.codecool.gladiator.view.Viewable;
+import com.sun.source.tree.BinaryTree;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Colosseum {
 
@@ -17,7 +16,7 @@ public class Colosseum {
 
     private final Viewable view;
     private final GladiatorFactory gladiatorFactory;
-    private int stages = 2;
+    private int stages;
 
     public Colosseum(Viewable view, GladiatorFactory gladiatorFactory) {
         this.view = view;
@@ -36,24 +35,40 @@ public class Colosseum {
         announceChampion(champion);
 
         // The following line chains the above lines:
-        // announceChampion(getChampion(new BinaryTree<>(generateGladiators((int) Math.pow(2, stages)))));
+//         announceChampion(getChampion(new BinaryTree<>(generateGladiators((int) Math.pow(2, stages)))));
     }
 
     private List<Gladiator> generateGladiators(int numberOfGladiators) {
         List<Gladiator> gladiators = new ArrayList<>();
-        // Todo
+
+        for (int i = 0; i < numberOfGladiators; i++) {
+            Gladiator gladiator = gladiatorFactory.generateRandomGladiator();
+            gladiators.add(gladiator);
+        }
         introduceGladiators(gladiators);
         return gladiators;
     }
 
     private List<Contestants> splitGladiatorsIntoPairs(List<Gladiator> gladiators) {
-        // Todo
-        return new LinkedList<>();
+        LinkedList<Contestants> pairs = new LinkedList<>();
+        for (int i = 0; i < gladiators.size(); i++) {
+            if (i == 0 || i % 2 == 0) {
+                pairs.add(new Contestants(gladiators.get(i), gladiators.get(i + 1)));
+            }
+        }
+        return pairs;
     }
 
     private Gladiator getChampion(Tournament tournament) {
         // Todo - call simulateCombat as many times as needed
-        return null;
+        Gladiator winner;
+        Contestants opponents = tournament.getContestants();
+
+        if (opponents == null) {
+            opponents = new Contestants(getChampion(tournament.getLeftBranch()), getChampion(tournament.getRightBranch()));
+        }
+        winner = simulateCombat(new Combat(opponents));
+        return winner;
     }
 
     private Gladiator simulateCombat(Combat combat) {
@@ -62,10 +77,20 @@ public class Colosseum {
         announceCombat(gladiator1, gladiator2);
 
         // Todo
+        combat.simulate();
+
+        Gladiator winner = gladiator1.isDead() ? gladiator2 : gladiator1;
+        Gladiator looser = gladiator1.isDead() ? gladiator1: gladiator2;
+        healWinner(winner);
 
         displayCombatLog(combat);
-        announceWinnerAndLoser(gladiator1, gladiator2);
-        return gladiator1;
+        announceWinnerAndLoser(winner, looser);
+        return winner;
+    }
+
+    private void healWinner(Gladiator winner) {
+        winner.setCurrentHp(winner.getBaseHp());
+        winner.increaseLevel();
     }
 
     public void welcome() {

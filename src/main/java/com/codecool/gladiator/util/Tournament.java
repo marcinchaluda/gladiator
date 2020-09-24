@@ -88,6 +88,20 @@ public class Tournament {
      */
     public void add(Contestants value) {
         // Todo
+        if (contestants == null && leftBranch == null && rightBranch == null) {
+            this.setContestants(value);
+        } else if (!(contestants == null) && leftBranch == null && rightBranch == null) {
+            leftBranch = new Tournament(contestants);
+            rightBranch = new Tournament(value);
+            contestants = null;
+        } else {
+            if (left) {
+                leftBranch.add(value);
+            } else {
+                rightBranch.add(value);
+            }
+            left = !left;
+        }
     }
 
     /**

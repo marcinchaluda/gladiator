@@ -12,4 +12,8 @@ public class Contestants {
         this.gladiator2 = gladiator2;
     }
 
+    @Override
+    public String toString() {
+        return gladiator1.toString() + gladiator2.toString();
+    }
 }
